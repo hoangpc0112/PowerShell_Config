@@ -16,32 +16,65 @@ oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\space.omp.json" | Invoke-Ex
 # # Initial GitHub.com connectivity check with 1 second timeout
 $canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
 
-# Check for Profile Updates
-function Update-Profile {
+# Check for GlazeWM Config Updates
+function Update-GlazeWM {
     if (-not $global:canConnectToGitHub) {
-        Write-Host "Skipping profile update check due to GitHub.com not responding within 1 second." -ForegroundColor Yellow
+        Write-Host "Skipping glazewm config update check due to GitHub.com not responding within 1 second." -ForegroundColor Yellow
         return
     }
 
     try {
+        Write-Host "Checking for GlazeWM config updates..." -ForegroundColor Cyan
+        $url = "https://raw.githubusercontent.com/hoangpc0112/GlazeWM_2.11_Config/refs/heads/main/config.yaml"
+        $oldhash = Get-FileHash "$env:USERPROFILE/.glaze-wm/config.yaml"
+        Invoke-RestMethod $url -OutFile "$env:temp/GlazeWM_config.yaml"
+        $newhash = Get-FileHash "$env:temp/GlazeWM_config.yaml"
+        if ($newhash.Hash -ne $oldhash.Hash) {
+            Copy-Item -Path "$env:temp/GLazeWM_config.yaml" -Destination "$env:USERPROFILE/.glaze-wm/config.yaml" -Force
+            Write-Host "Config has been updated. Please reload GlazeWM" -ForegroundColor Magenta
+        }
+        else {
+            Write-Host "GlazeWM Config is up to date." -ForegroundColor Green
+        }
+    } catch {
+        Write-Error "Unable to check for config updates"
+    } finally {
+        Remove-Item "$env:temp/GlazeWM_config.yaml" -ErrorAction SilentlyContinue
+    }
+}
+Update-GlazeWM
+
+Write-Host ""
+
+# Check for Profile Updates
+function Update-Profile {
+    if (-not $global:canConnectToGitHub) {
+        Write-Host "Skipping Powershell profile update check due to GitHub.com not responding within 1 second." -ForegroundColor Yellow
+        return
+    }
+
+    try {
+        Write-Host "Checking for PowerShell profile updates..." -ForegroundColor Cyan
         $url = "https://raw.githubusercontent.com/hoangpc0112/PowerShell_Config/refs/heads/main/Microsoft.PowerShell_profile.ps1"
         $oldhash = Get-FileHash $PROFILE
         Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
         $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
         if ($newhash.Hash -ne $oldhash.Hash) {
             Copy-Item -Path "$env:temp/Microsoft.PowerShell_profile.ps1" -Destination $PROFILE -Force
-            Write-Host "Profile has been updated. Please restart your shell to reflect changes" -ForegroundColor Magenta
+            Write-Host "Profile has been updated. Please reload PowerShell" -ForegroundColor Magenta
         }
         else {
-            Write-Host "Your profile is up to date." -ForegroundColor Green
+            Write-Host "Profile is up to date." -ForegroundColor Green
         }
     } catch {
-        Write-Error "Unable to check for `$profile updates"
+        Write-Error "Unable to check for profile updates"
     } finally {
         Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
     }
 }
 Update-Profile
+
+Write-Host ""
 
 function Update-PowerShell {
     if (-not $global:canConnectToGitHub) {
@@ -63,9 +96,9 @@ function Update-PowerShell {
         if ($updateNeeded) {
             Write-Host "Updating PowerShell..." -ForegroundColor Yellow
             winget upgrade "Microsoft.PowerShell" --accept-source-agreements --accept-package-agreements
-            Write-Host "PowerShell has been updated. Please restart your shell to reflect changes" -ForegroundColor Magenta
+            Write-Host "PowerShell has been updated. Please restart PowerShell" -ForegroundColor Magenta
         } else {
-            Write-Host "Your PowerShell is up to date." -ForegroundColor Green
+            Write-Host "PowerShell is up to date." -ForegroundColor Green
         }
     } catch {
         Write-Error "Failed to update PowerShell. Error: $_"
