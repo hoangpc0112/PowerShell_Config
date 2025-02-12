@@ -18,13 +18,13 @@ function Update-GlazeWM {
         
         if ($newhash.Hash -ne $oldhash.Hash) {
             Copy-Item -Path "$env:temp/GLazeWM_config.yaml" -Destination "$env:USERPROFILE/.glaze-wm/config.yaml" -Force
-            Write-Host "Config updated. Reload GlazeWM" -ForegroundColor Magenta
+            Write-Host "GlazeWM config updated. Please reload" -ForegroundColor Magenta
         }
         else {
             Write-Host "GlazeWM up to date" -ForegroundColor Green
         }
     } catch {
-        Write-Error "Config update failed"
+        Write-Error "GlazeWM config update failed"
     } finally {
         Remove-Item "$env:temp/GlazeWM_config.yaml" -ErrorAction SilentlyContinue
     }
@@ -39,13 +39,13 @@ function Update-Profile {
         
         if ($newhash.Hash -ne $oldhash.Hash) {
             Copy-Item -Path "$env:temp/Microsoft.PowerShell_profile.ps1" -Destination $PROFILE -Force
-            Write-Host "Profile updated. Please reload" -ForegroundColor Magenta
+            Write-Host "PowerShell profile updated. Please reload" -ForegroundColor Magenta
         }
         else {
-            Write-Host "Profile is up to date" -ForegroundColor Green
+            Write-Host "PowerShell profile is up to date" -ForegroundColor Green
         }
     } catch {
-        Write-Error "Profile update failed"
+        Write-Error "PowerShell profile update failed"
     } finally {
         Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
     }
