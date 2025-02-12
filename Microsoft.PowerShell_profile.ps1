@@ -21,7 +21,7 @@ function Update-GlazeWM {
             Write-Host "GlazeWM config updated. Please reload" -ForegroundColor Magenta
         }
         else {
-            Write-Host "GlazeWM up to date" -ForegroundColor Green
+            Write-Host "GlazeWM config is up to date" -ForegroundColor Green
         }
     } catch {
         Write-Error "GlazeWM config update failed"
