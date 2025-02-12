@@ -2,7 +2,6 @@ using namespace System.Management.Automation
 using namespace System.Management.Automation.Language
 
 Import-Module -Name Terminal-Icons
-set-alias desktop "Desktop.ps1"
 
 oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\space.omp.json" | Invoke-Expression
 
@@ -91,6 +90,8 @@ function lazyg { git add .; git commit -m "$args"; git push }
 
 # Shell experience
 Set-PSReadLineOption -Colors @{ Command = 'Yellow'; Parameter = 'Green'; String = 'Cyan' }
+Set-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -PredictionViewStyle ListView
 
 # Zoxide
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
