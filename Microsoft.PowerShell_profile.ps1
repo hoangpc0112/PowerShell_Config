@@ -11,7 +11,7 @@ $canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds
 
 function Update-GlazeWM {
     try {
-        $url = "https://raw.githubusercontent.com/hoangpc0112/GlazeWM_2.11_Config/refs/heads/main/config.yaml"
+        $url = "https://raw.githubusercontent.com/hoangpc0112/GlazeWM_2.11_Config/main/config.yaml"
         $oldhash = Get-FileHash "$env:USERPROFILE/.glaze-wm/config.yaml"
         Invoke-RestMethod $url -OutFile "$env:temp/GlazeWM_config.yaml"
         $newhash = Get-FileHash "$env:temp/GlazeWM_config.yaml"
@@ -32,7 +32,7 @@ function Update-GlazeWM {
 
 function Update-Profile {
     try {
-        $url = "https://raw.githubusercontent.com/hoangpc0112/PowerShell_Config/refs/heads/main/Microsoft.PowerShell_profile.ps1"
+        $url = "https://raw.githubusercontent.com/hoangpc0112/PowerShell_Config/main/Microsoft.PowerShell_profile.ps1"
         $oldhash = Get-FileHash $PROFILE
         Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
         $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
