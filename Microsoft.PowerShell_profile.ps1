@@ -1,12 +1,12 @@
 using namespace System.Management.Automation
 using namespace System.Management.Automation.Language
 
-Import-Module PSReadLine
 Import-Module -Name Terminal-Icons
 set-alias desktop "Desktop.ps1"
 
 oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\space.omp.json" | Invoke-Expression
 
+# Check connection
 $canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
 
 function Update-GlazeWM {
@@ -91,19 +91,6 @@ function lazyg { git add .; git commit -m "$args"; git push }
 
 # Shell experience
 Set-PSReadLineOption -Colors @{ Command = 'Yellow'; Parameter = 'Green'; String = 'Cyan' }
-Set-PSReadLineOption -PredictionSource History
-Set-PSReadLineOption -PredictionViewStyle ListView
-Set-PSReadLineOption -EditMode Windows
 
-Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
-    param($wordToComplete, $commandAst, $cursorPosition)
-    [Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
-    winget complete --word="$($wordToComplete.Replace('"', '""'))" --commandline "$($commandAst.ToString().Replace('"', '""'))" --position $cursorPosition | 
-        ForEach-Object { [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_) }
-}
-
+# Zoxide
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
-
-# Chocolatey integration
-$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path $ChocolateyProfile) { Import-Module $ChocolateyProfile }
