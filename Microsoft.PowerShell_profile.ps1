@@ -64,7 +64,7 @@ function Update-Profile {
             Write-Host "Profile has been updated. Please reload PowerShell" -ForegroundColor Magenta
         }
         else {
-            Write-Host "Profile is up to date." -ForegroundColor Green
+            Write-Host "PowerShell profile is up to date." -ForegroundColor Green
         }
     } catch {
         Write-Error "Unable to check for profile updates"
