@@ -29,26 +29,26 @@ function Update-GlazeWM {
     }
 }
 
-# function Update-Profile {
-#     try {
-#         $url = "https://raw.githubusercontent.com/hoangpc0112/PowerShell_Config/main/Microsoft.PowerShell_profile.ps1"
-#         $oldhash = Get-FileHash $PROFILE
-#         Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
-#         $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
+function Update-Profile {
+    try {
+        $url = "https://raw.githubusercontent.com/hoangpc0112/PowerShell_Config/main/Microsoft.PowerShell_profile.ps1"
+        $oldhash = Get-FileHash $PROFILE
+        Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
+        $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
         
-#         if ($newhash.Hash -ne $oldhash.Hash) {
-#             Copy-Item -Path "$env:temp/Microsoft.PowerShell_profile.ps1" -Destination $PROFILE -Force
-#             Write-Host "PowerShell profile updated. Please reload" -ForegroundColor Magenta
-#         }
-#         else {
-#             Write-Host "PowerShell profile is up to date" -ForegroundColor Green
-#         }
-#     } catch {
-#         Write-Error "PowerShell profile update failed"
-#     } finally {
-#         Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
-#     }
-# }
+        if ($newhash.Hash -ne $oldhash.Hash) {
+            Copy-Item -Path "$env:temp/Microsoft.PowerShell_profile.ps1" -Destination $PROFILE -Force
+            Write-Host "PowerShell profile updated. Please reload" -ForegroundColor Magenta
+        }
+        else {
+            Write-Host "PowerShell profile is up to date" -ForegroundColor Green
+        }
+    } catch {
+        Write-Error "PowerShell profile update failed"
+    } finally {
+        Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
+    }
+}
 
 function Update-PowerShell {
     try {
@@ -69,7 +69,7 @@ function Update-PowerShell {
 
 if ($global:canConnectToGitHub) {
     Update-GlazeWM
-    # Update-Profile
+    Update-Profile
     Update-PowerShell
 }
 
