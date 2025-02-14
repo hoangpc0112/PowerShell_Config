@@ -78,7 +78,18 @@ function wf {
     $username = $env:USERNAME
     $os = (Get-CimInstance Win32_OperatingSystem).Caption
     $cpu = (Get-CimInstance Win32_Processor).Name.Trim()
-    $gpu = (Get-CimInstance Win32_VideoController | Select-Object -First 1).Name
+
+    $gpuList = Get-CimInstance Win32_VideoController
+    if ($gpuList.Count -gt 1) {
+        $gpu = $gpuList[1].Name
+    } else {
+        $gpu = $gpuList[0].Name
+    }
+    $gpuWords = $gpu -split "\s+"
+    if ($gpuWords.Count -gt 2) {
+        $gpu = ($gpuWords[0..($gpuWords.Count - 3)]) -join " "
+    }
+    
     $ram_total = [math]::Round((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 0)
     $shell = $PSVersionTable.PSVersion
     $resolution = (Get-CimInstance Win32_VideoController | Select-Object -First 1).CurrentHorizontalResolution.ToString() + "x" + (Get-CimInstance Win32_VideoController | Select-Object -First 1).CurrentVerticalResolution.ToString()
