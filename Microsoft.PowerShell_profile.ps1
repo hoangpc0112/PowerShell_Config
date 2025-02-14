@@ -73,16 +73,17 @@ if ($global:canConnectToGitHub) {
     Update-PowerShell
 }
 
-$hostname = $env:COMPUTERNAME
-$username = $env:USERNAME
-$os = (Get-CimInstance Win32_OperatingSystem).Caption
-$cpu = (Get-CimInstance Win32_Processor).Name.Trim()
-$gpu = (Get-CimInstance Win32_VideoController | Select-Object -First 1).Name
-$ram_total = [math]::Round((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 2)
-$ram_free = [math]::Round((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1MB, 2)
-$ram_used = $ram_total - $ram_free
-$shell = $PSVersionTable.PSVersion
-$resolution = (Get-CimInstance Win32_VideoController | Select-Object -First 1).CurrentHorizontalResolution.ToString() + "x" + (Get-CimInstance Win32_VideoController | Select-Object -First 1).CurrentVerticalResolution.ToString()
+function winfetch {
+    $hostname = $env:COMPUTERNAME
+    $username = $env:USERNAME
+    $os = (Get-CimInstance Win32_OperatingSystem).Caption
+    $cpu = (Get-CimInstance Win32_Processor).Name.Trim()
+    $gpu = (Get-CimInstance Win32_VideoController | Select-Object -First 1).Name
+    $ram_total = [math]::Round((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 2)
+    $ram_free = [math]::Round((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1MB, 2)
+    $ram_used = $ram_total - $ram_free
+    $shell = $PSVersionTable.PSVersion
+    $resolution = (Get-CimInstance Win32_VideoController | Select-Object -First 1).CurrentHorizontalResolution.ToString() + "x" + (Get-CimInstance Win32_VideoController | Select-Object -First 1).CurrentVerticalResolution.ToString()
 
 $ascii_logo = @"
 
@@ -99,7 +100,8 @@ $ascii_logo = @"
 [37m⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣭⣭⣭⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿   [0m[1;41m    [1;42m    [1;43m    [1;44m    [1;45m    [1;46m    [1;47m    [0m
 "@
 
-Write-Host $ascii_logo
+    Write-Host $ascii_logo
+}
 
 Write-Host "`n💡 Hi HoangPC, what can I do for you today? ❤️`n" -ForegroundColor White
 
