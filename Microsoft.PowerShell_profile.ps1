@@ -73,6 +73,38 @@ if ($global:canConnectToGitHub) {
     Update-PowerShell
 }
 
+Write-Host "`n💡 Hi HoangPC, what can I do for you today? ❤️`n" -ForegroundColor White
+
+# Core utilities
+function which ($command) { Get-Command $command -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path }
+function reload-profile { & $profile }
+function la { Get-ChildItem -Path . -Force | Format-Table -AutoSize }
+function ll { Get-ChildItem -Path . -Force -Hidden | Format-Table -AutoSize }
+function wta {Start-Process wt -Verb RunAs}
+function mf {
+    param (
+        [string]$FileNamePattern,   # Filename pattern (e.g., "*.txt", "file*.log")
+        [int]$Count,                # Number of files to move
+        [string]$Destination        # Target directory
+    )
+
+    if (!(Test-Path -Path $Destination)) {
+        Write-Host "Creating destination directory: $Destination"
+        New-Item -ItemType Directory -Path $Destination | Out-Null
+    }
+
+    $files = Get-ChildItem -Path . -Filter $FileNamePattern | Select-Object -First $Count
+
+    if ($files.Count -eq 0) {
+        Write-Host "No files found matching the pattern '$FileNamePattern'."
+        return
+    }
+
+    foreach ($file in $files) {
+        Move-Item -Path $file.FullName -Destination $Destination -Force
+        Write-Host "Moved: $($file.Name) → $Destination"
+    }
+}
 function wf {
     $hostname = $env:COMPUTERNAME
     $username = $env:USERNAME
@@ -110,40 +142,6 @@ $winfetch = @"
 
 "@
     Write-Host $winfetch
-}
-
-Write-Host "`n💡 Hi HoangPC, what can I do for you today? ❤️`n" -ForegroundColor White
-
-# Core utilities
-function which ($command) { Get-Command $command -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path }
-function reload-profile { & $profile }
-function la { Get-ChildItem -Path . -Force | Format-Table -AutoSize }
-function ll { Get-ChildItem -Path . -Force -Hidden | Format-Table -AutoSize }
-function pwd { Get-Location }
-function wtadmin {Start-Process wt -Verb RunAs}
-function mf {
-    param (
-        [string]$FileNamePattern,   # Filename pattern (e.g., "*.txt", "file*.log")
-        [int]$Count,                # Number of files to move
-        [string]$Destination        # Target directory
-    )
-
-    if (!(Test-Path -Path $Destination)) {
-        Write-Host "Creating destination directory: $Destination"
-        New-Item -ItemType Directory -Path $Destination | Out-Null
-    }
-
-    $files = Get-ChildItem -Path . -Filter $FileNamePattern | Select-Object -First $Count
-
-    if ($files.Count -eq 0) {
-        Write-Host "No files found matching the pattern '$FileNamePattern'."
-        return
-    }
-
-    foreach ($file in $files) {
-        Move-Item -Path $file.FullName -Destination $Destination -Force
-        Write-Host "Moved: $($file.Name) → $Destination"
-    }
 }
 
 
