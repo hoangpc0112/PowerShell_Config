@@ -100,6 +100,10 @@ function mf {
         return
     }
 
+    $files | ForEach-Object { $_.Name } | Set-Clipboard
+
+    Write-Host "Copied file names to clipboard.`n"
+
     foreach ($file in $files) {
         Move-Item -Path $file.FullName -Destination $Destination -Force
         Write-Host "Moved: $($file.Name) → $Destination"
