@@ -16,14 +16,9 @@ function Update-GlazeWM {
         $newhash = Get-FileHash "$env:temp/GlazeWM_config.yaml"
         
         if ($newhash.Hash -ne $oldhash.Hash) {
-            Copy-Item -Path "$env:temp/GLazeWM_config.yaml" -Destination "$env:USERPROFILE/.glaze-wm/config.yaml" -Force
-            Write-Host "GlazeWM config updated. Please reload" -ForegroundColor Magenta
-        }
-        else {
-            Write-Host "GlazeWM config is up to date" -ForegroundColor Green
+            Copy-Item -Path "$env:temp/GlazeWM_config.yaml" -Destination "$env:USERPROFILE/.glaze-wm/config.yaml" -Force
         }
     } catch {
-        Write-Error "GlazeWM config update failed"
     } finally {
         Remove-Item "$env:temp/GlazeWM_config.yaml" -ErrorAction SilentlyContinue
     }
@@ -38,13 +33,8 @@ function Update-Profile {
         
         if ($newhash.Hash -ne $oldhash.Hash) {
             Copy-Item -Path "$env:temp/Microsoft.PowerShell_profile.ps1" -Destination $PROFILE -Force
-            Write-Host "PowerShell profile updated. Please reload" -ForegroundColor Magenta
-        }
-        else {
-            Write-Host "PowerShell profile is up to date" -ForegroundColor Green
         }
     } catch {
-        Write-Error "PowerShell profile update failed"
     } finally {
         Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
     }
@@ -57,23 +47,21 @@ function Update-PowerShell {
         
         if ($currentVersion -lt $latestVersion) {
             winget upgrade "Microsoft.PowerShell" --accept-source-agreements --accept-package-agreements
-            Write-Host "PowerShell updated. Please restart" -ForegroundColor Magenta
-        }
-        else {
-            Write-Host "PowerShell is up to date" -ForegroundColor Green
         }
     } catch {
-        Write-Error "PowerShell update failed"
     }
 }
 
-if ($global:canConnectToGitHub) {
-    Update-GlazeWM
-    Update-Profile
-    Update-PowerShell
+if ($canConnectToGitHub) {
+    # Update silently in the background
+    Start-Job -ScriptBlock {
+        Update-GlazeWM
+        Update-Profile
+        Update-PowerShell
+    } | Out-Null
 }
 
-Write-Host "`n💡 Hi HoangPC, what can I do for you today? ❤️`n" -ForegroundColor White
+Write-Host "💡 Hi HoangPC, what can I do for you today? ❤️`n" -ForegroundColor White
 
 # Core utilities
 function which ($command) { Get-Command $command -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path }
@@ -84,7 +72,7 @@ function wta {Start-Process wt -Verb RunAs}
 function mf {
     param (
         [string]$FileNamePattern,   # Filename pattern (e.g., "*.txt", "file*.log")
-        [int]$Count,                # Number of files to move
+        [int]$Count = 0,            # Default: move all files if not specified
         [string]$Destination        # Target directory
     )
 
@@ -93,7 +81,10 @@ function mf {
         New-Item -ItemType Directory -Path $Destination | Out-Null
     }
 
-    $files = Get-ChildItem -Path . -Filter $FileNamePattern | Select-Object -First $Count
+    $files = Get-ChildItem -Path . -Filter $FileNamePattern
+    if ($Count -gt 0) {
+        $files = $files | Select-Object -First $Count
+    }
 
     if ($files.Count -eq 0) {
         Write-Host "No files found matching the pattern '$FileNamePattern'."
@@ -101,12 +92,12 @@ function mf {
     }
 
     $files | ForEach-Object { $_.Name } | Set-Clipboard
-
     Write-Host "Copied file names to clipboard.`n"
 
+    Write-Host "Moved:`n"
     foreach ($file in $files) {
         Move-Item -Path $file.FullName -Destination $Destination -Force
-        Write-Host "Moved: $($file.Name) → $Destination"
+        Write-Host "$($file.Name) → $Destination"
     }
 }
 function wf {
