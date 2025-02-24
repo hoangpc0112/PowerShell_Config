@@ -3,7 +3,7 @@ using namespace System.Management.Automation.Language
 
 Import-Module -Name Terminal-Icons
 
-oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\space.omp.json" | Invoke-Expression
+oh-my-posh init pwsh --config "$env:USERPROFILE\Documents\PowerShell\space.omp.json" | Invoke-Expression
 
 # Check connection
 $canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
