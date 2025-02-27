@@ -5,6 +5,8 @@ Import-Module -Name Terminal-Icons
 
 oh-my-posh init pwsh --config "$env:USERPROFILE\Documents\PowerShell\space.omp.json" | Invoke-Expression
 
+Write-Host "💡 Hi HoangPC, what can I do for you today? ❤️`n" -ForegroundColor White
+
 # Check connection
 $canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
 
@@ -51,17 +53,6 @@ function Update-PowerShell {
     } catch {
     }
 }
-
-if ($canConnectToGitHub) {
-    # Update silently in the background
-    Start-Job -ScriptBlock {
-        Update-GlazeWM
-        Update-Profile
-        Update-PowerShell
-    } | Out-Null
-}
-
-Write-Host "💡 Hi HoangPC, what can I do for you today? ❤️`n" -ForegroundColor White
 
 # Core utilities
 function which ($command) { Get-Command $command -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path }
@@ -137,6 +128,17 @@ $winfetch = @"
 
 "@
     Write-Host $winfetch
+}
+function wu {
+    if ($canConnectToGitHub) {
+        Update-GlazeWM
+        Update-Profile
+        Update-PowerShell
+        Write-Host "🚀 Update completed! 🚀`n" -ForegroundColor Green
+    }
+    else {
+        Write-Host "❌ Unable to connect to GitHub. Please check your network connection.`n" -ForegroundColor Red
+    }
 }
 
 
